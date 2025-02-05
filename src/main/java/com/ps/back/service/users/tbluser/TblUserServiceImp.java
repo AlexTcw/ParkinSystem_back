@@ -14,13 +14,17 @@ import com.ps.back.service.util.ValidUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -86,21 +90,43 @@ public class TblUserServiceImp implements TblUserService {
             user = tblUserDao.findTblUserByCveUser(consume.getCveUser());
         }
 
+        Set<String> carSetUser = consume.getCarSetUser().isEmpty()
+                ? new HashSet<>() : consume.getCarSetUser();
+
+        if (!carSetUser.isEmpty()) {
+            validateCarSetPlate(carSetUser, consume.getRolSetUser());
+        }
+
         user.setEmailUser(consume.getEmailUser());
         user.setGenderUser(consume.getGenderUser());
         user.setNameUser(consume.getNameUser());
         user.setLastNameUser(consume.getLastNameUser());
         user.setLoginUser(consume.getLoginUser());
         user.setPasswordUser(bcrypt(consume.getPasswordUser()));
-        extraData.put("newPassword", consume.getPasswordUser());
         user.setTblRoles(consume.getRolSetUser().stream()
                 .map(Integer::longValue)
                 .map(tblRolDao::findTblRolByCveRol)
                 .collect(Collectors.toSet()));
+        user.setCveUsuCar(carSetUser);
+
+        extraData.put("newPassword", consume.getPasswordUser());
+        extraData.put("carUser", carSetUser);
 
         user = tblUserDao.createOrUpdateTbluser(user);
 
         return fillResponseJsonUser(user,extraData);
+    }
+
+    @Transactional
+    @Override
+    public ResponseJsonString deleteTblUserByCveUser(Long cveUser) {
+        ValidUtils.validateConsume(cveUser);
+
+        tblUserDao.deleteTblUserByCveUser(cveUser);
+
+        return ResponseJsonString.builder()
+                .key("User "+cveUser+" deleted successfully")
+                .build();
     }
 
     private ResponseJsonUser fillResponseJsonUser(TblUser user, Map<String,Object> extraData) {
@@ -119,15 +145,26 @@ public class TblUserServiceImp implements TblUserService {
                 .build();
     }
 
-    @Transactional
-    @Override
-    public ResponseJsonString deleteTblUserByCveUser(Long cveUser) {
-        ValidUtils.validateConsume(cveUser);
+    private boolean validateCarPlate(String plate) {
+        String carPlatePattern = "^[A-Z]{3}-?\\d{3}$";
+        Pattern pattern = Pattern.compile(carPlatePattern);
+        return pattern.matcher(plate).matches();
+    }
 
-        tblUserDao.deleteTblUserByCveUser(cveUser);
+    private void validateCarSetPlate(Set<String> carSetUser, Set<Integer> rolSetUser) {
+        if (!rolSetUser.contains(4)){
+            throw new BadCredentialsException("You are not allowed to add car set user");
+        }
+        boolean allValid = carSetUser.stream()
+                .allMatch(this::validateCarPlate);
+        if (!allValid) {
+            throw new IllegalArgumentException("Some car plate is not valid");
+        }
+        carSetUser.forEach(carPlate -> {
+            if(tblUserDao.existsTblUserWithCarPlate(carPlate)){
+                throw new IllegalArgumentException("Car plate already exists");
+            }
+        });
 
-        return ResponseJsonString.builder()
-                .key("User "+cveUser+" deleted successfully")
-                .build();
     }
 }

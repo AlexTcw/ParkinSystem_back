@@ -17,4 +17,5 @@ public class ConsumeJsonUser {
     private String passwordUser;
     private String genderUser;
     private Set<Integer> rolSetUser;
+    private Set<String> carSetUser;
 }

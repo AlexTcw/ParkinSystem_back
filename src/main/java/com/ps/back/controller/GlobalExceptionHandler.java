@@ -1,6 +1,8 @@
 package com.ps.back.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -19,7 +21,7 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
     public ResponseEntity<ErrorResponse> defaultErrorHandler(Exception ex) {
-        ex.printStackTrace();
+        System.err.println(ex.getMessage());
         log.error(ex.getMessage());
         ErrorResponse error = new ErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -64,5 +66,17 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
         String message = (ex != null && ex.getMessage() != null) ? ex.getMessage() : "User Not Found";
         ErrorResponse error = new ErrorResponse(message, HttpStatus.NOT_FOUND.value());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDuplicateEntryException(DataIntegrityViolationException ex) {
+        String message = "This data is already associated with another user.";
+
+        if (ex.getCause() instanceof ConstraintViolationException) {
+            message = "The value you are trying to save is already in use by another user.";
+        }
+
+        ErrorResponse error = new ErrorResponse(message, HttpStatus.CONFLICT.value());
+        return new ResponseEntity<>(error, HttpStatus.CONFLICT);
     }
 }

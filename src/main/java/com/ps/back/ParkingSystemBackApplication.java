@@ -46,7 +46,7 @@ public class ParkingSystemBackApplication {
 						.emailUser("admonsp@parking.com")
 						.cveUsuCar(Set.of("DEFAULT"))
 						.loginUser("admonsp")
-						.passwordUser("$2a$10$wmwaxMQyBneE6c5CJZzUDeySeng1MCtsilxsrhvtMJCP72sbCV1ry")
+						.passwordUser("$2a$10$K.cb32QxY1K56v8vtuuUjuf7iGsA389PfVwSz2yTDhBQXoJGw8dC.")
 						.tblRoles(Set.of(roleAdmin, roleUser,roleGeneric, roleStorage))
 						.build();
 				tblUserDao.createOrUpdateTbluser(tblUserAdmin);

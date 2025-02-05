@@ -23,4 +23,6 @@ public interface TblUserDao {
     boolean existsTblUserByUsernameOrEmailUser(String param);
 
     void deleteTblUserByCveUser(Long cveUser);
+
+    boolean existsTblUserWithCarPlate(String plate);
 }

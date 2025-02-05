@@ -12,7 +12,7 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 public class ResponseJsonUser {
-    private Long cveUser;
+    private Long cveUser = 0L;
     private String loginUser;
     private String emailUser;
     private String genderUser;

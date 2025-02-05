@@ -48,6 +48,11 @@ public class TblUserDaoImp implements TblUserDao {
     }
 
     @Override
+    public boolean existsTblUserWithCarPlate(String plate) {
+        return tblUserRepository.existsTblUserWithCarPlate(plate)>0;
+    }
+
+    @Override
     public TblUser findTblUserByUsername(String username) {
         return tblUserRepository.findTblUserByLoginUser(username);
     }

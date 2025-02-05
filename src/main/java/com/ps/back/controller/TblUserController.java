@@ -29,7 +29,14 @@ public class TblUserController {
     }
 
     @PostMapping(value = {"/createOrUpdateUser"}, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ResponseJsonUser> createOrUpdateUser(@RequestBody ConsumeJsonUser consume) {
+    public ResponseEntity<ResponseJsonUser> createOrUpdateUser(@RequestBody ConsumeJsonUser consume,
+                                                               @RequestParam(required = false) Long cveUser) {
+        if(cveUser != null) {
+            if (cveUser>0){
+                consume.setCveUser(cveUser);
+            }
+        }
+
         return ResponseEntity.ok(tblUserService.createOrUpdateUser(consume));
     }
 
