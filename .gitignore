@@ -1,0 +1,30 @@
+# 🔹 Automatically generated folders
+/target/
+out/
+bin/
+
+# 🔹 IDE-specific files
+/.idea/
+/*.iml
+/.vscode/
+/.classpath
+/.project
+/.settings/
+
+# 🔹 Build artifacts
+*.log
+*.war
+*.jar
+
+# 🔹 Dependency management (for Maven and Gradle)
+/.mvn/
+/.gradle/
+!gradle-wrapper.jar
+/build/
+
+# 🔹 OS-specific files
+.DS_Store
+Thumbs.db
+
+# 🔹 Sensitive environment files
+.env
