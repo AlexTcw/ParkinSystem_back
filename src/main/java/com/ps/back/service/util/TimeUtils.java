@@ -5,14 +5,18 @@ import java.time.format.DateTimeFormatter;
 
 public class TimeUtils {
 
-    public static String getDateFormated(LocalDateTime date) {
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        return date.format(dateFormatter);
+    public static String getDateFormated(LocalDateTime date, String format) {
+        format = format == null ? "dd/MM/yyyy" : format;
+        return getHourFormated(date, format);
     }
 
-
-    public static String getHourFormated(LocalDateTime date) {
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+    public static String getHourFormated(LocalDateTime date, String format) {
+        format = format == null ? "HH:mm:ss" : format;
+        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern(format);
         return date.format(timeFormatter);
+    }
+
+    public static LocalDateTime getCurrentTime() {
+        return LocalDateTime.now();
     }
 }

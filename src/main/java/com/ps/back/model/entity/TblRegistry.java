@@ -2,7 +2,10 @@ package com.ps.back.model.entity;
 
 import com.ps.back.model.entity.enums.ParkingStateEnum;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -10,6 +13,9 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "TBLREGISTRY")
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class TblRegistry {
 
     @Id

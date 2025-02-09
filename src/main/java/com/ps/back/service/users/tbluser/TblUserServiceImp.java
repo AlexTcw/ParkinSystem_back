@@ -13,6 +13,7 @@ import com.ps.back.service.users.jwt.JwtService;
 import com.ps.back.service.util.ValidUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,6 +28,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TblUserServiceImp implements TblUserService {
@@ -152,7 +154,9 @@ public class TblUserServiceImp implements TblUserService {
     }
 
     private void validateCarSetPlate(Set<String> carSetUser, Set<Integer> rolSetUser) {
-        if (!rolSetUser.contains(4)){
+        rolSetUser.forEach(rol -> {log.debug(rol.toString());});
+
+        if (!(rolSetUser.contains(4) || rolSetUser.contains(1))) {
             throw new BadCredentialsException("You are not allowed to add car set user");
         }
         boolean allValid = carSetUser.stream()

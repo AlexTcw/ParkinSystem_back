@@ -1,8 +1,12 @@
 package com.ps.back.service.util;
 
 
+import com.ps.back.dao.tbluser.TblUserDao;
+import com.ps.back.model.entity.TblUser;
 import com.ps.back.model.exception.JsonNullException;
 import com.ps.back.model.pojos.consume.ConsumeJsonGeneric;
+import com.ps.back.service.users.tbluser.TblUserService;
+import lombok.RequiredArgsConstructor;
 
 public class ValidUtils {
 
@@ -16,6 +20,5 @@ public class ValidUtils {
                 throw new JsonNullException("missing data in json");
             }
         }
-
     }
 }

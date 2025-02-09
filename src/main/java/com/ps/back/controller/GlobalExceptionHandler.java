@@ -1,5 +1,6 @@
 package com.ps.back.controller;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -23,6 +24,7 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorResponse> defaultErrorHandler(Exception ex) {
         System.err.println(ex.getMessage());
         log.error(ex.getMessage());
+        ex.printStackTrace();
         ErrorResponse error = new ErrorResponse(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR.value());
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -40,7 +42,7 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
+    @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<ErrorResponse> handelBadCredentialsException(BadCredentialsException ex) {
         String message = (ex != null && ex.getMessage() != null) ? ex.getMessage() : "Authentication is required or has failed";
         ErrorResponse error = new ErrorResponse(message, HttpStatus.UNAUTHORIZED.value());
@@ -66,6 +68,13 @@ public class GlobalExceptionHandler  extends ResponseEntityExceptionHandler {
         String message = (ex != null && ex.getMessage() != null) ? ex.getMessage() : "User Not Found";
         ErrorResponse error = new ErrorResponse(message, HttpStatus.NOT_FOUND.value());
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<ErrorResponse> handleExpiredJwtException(ExpiredJwtException ex) {
+        String message = (ex != null && ex.getMessage() != null) ? ex.getMessage() : "Token Expired";
+        ErrorResponse error = new ErrorResponse(message, HttpStatus.UNAUTHORIZED.value());
+        return new ResponseEntity<>(error, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
